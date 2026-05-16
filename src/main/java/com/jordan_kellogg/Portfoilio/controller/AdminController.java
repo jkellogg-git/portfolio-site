@@ -1,12 +1,22 @@
 package com.jordan_kellogg.Portfoilio.controller;
 
+import com.jordan_kellogg.Portfoilio.dto.ProjectForm;
+import com.jordan_kellogg.Portfoilio.model.Project;
+import com.jordan_kellogg.Portfoilio.service.ProjectService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class AdminController {
+
+    private final ProjectService projectService;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -14,7 +24,50 @@ public class AdminController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard() {
+    public String dashboard(Model model) {
+        model.addAttribute("projects", projectService.findAll());
         return "admin/dashboard";
+    }
+
+    @GetMapping("/projects/new")
+    public String newProjectForm(Model model) {
+        model.addAttribute("projectForm", new ProjectForm());
+        return "admin/project-form";
+    }
+
+    @GetMapping("/projects/{id}/edit")
+    public String editProjectForm(@PathVariable Long id, Model model) {
+        Project project = projectService.findById(id);
+        ProjectForm form = new ProjectForm();
+        form.setId(project.getId());
+        form.setTitle(project.getTitle());
+        form.setDescription(project.getDescription());
+        form.setThumbnailUrl(project.getThumbnailUrl());
+        form.setLiveDemoUrl(project.getLiveDemoUrl());
+        form.setSourceCodeUrl(project.getSourceCodeUrl());
+        model.addAttribute("projectForm", form);
+        return "admin/project-form";
+    }
+
+    @PostMapping("/projects/save")
+    public String saveProject(
+            @Valid @ModelAttribute("projectForm") ProjectForm form,
+            BindingResult result,
+            RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "admin/project-form";
+        }
+        projectService.save(form);
+        redirectAttributes.addFlashAttribute("successMessage", "Project saved!");
+        return "redirect:/admin/dashboard";
+    }
+
+    @PostMapping("/projects/{id}/delete")
+    public String deleteProject(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+        projectService.delete(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Project deleted.");
+        return "redirect:/admin/dashboard";
     }
 }
