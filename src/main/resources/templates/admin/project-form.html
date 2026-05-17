@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${projectForm.id != null} ? 'Edit Project' : 'New Project'">Project Form</title>
+</head>
+<body>
+
+<header>
+    <h1 th:text="${projectForm.id != null} ? 'Edit Project' : 'New Project'">Project Form</h1>
+    <nav>
+        <a th:href="@{/admin/dashboard}">← Back to Dashboard</a>
+    </nav>
+</header>
+
+<main>
+    <form th:action="@{/admin/projects/save}" th:object="${projectForm}" method="post">
+
+        <!-- Hidden ID field for edits -->
+        <input type="hidden" th:field="*{id}"/>
+
+        <div style="margin-bottom: 10px;">
+            <label for="title">Title *</label><br/>
+            <input type="text" id="title" th:field="*{title}" size="60"/>
+            <div th:if="${#fields.hasErrors('title')}" style="color: red;">
+                <p th:each="err : ${#fields.errors('title')}" th:text="${err}"></p>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <label for="description">Description</label><br/>
+            <textarea id="description" th:field="*{description}" rows="8" cols="60"></textarea>
+            <div th:if="${#fields.hasErrors('description')}" style="color: red;">
+                <p th:each="err : ${#fields.errors('description')}" th:text="${err}"></p>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <label for="thumbnailUrl">Thumbnail URL</label><br/>
+            <input type="text" id="thumbnailUrl" th:field="*{thumbnailUrl}" size="60"/>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <label for="liveDemoUrl">Live Demo URL</label><br/>
+            <input type="text" id="liveDemoUrl" th:field="*{liveDemoUrl}" size="60"/>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <label for="sourceCodeUrl">Source Code URL</label><br/>
+            <input type="text" id="sourceCodeUrl" th:field="*{sourceCodeUrl}" size="60"/>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <button type="submit">Save Project</button>
+            <a th:href="@{/admin/dashboard}" style="margin-left: 10px;">Cancel</a>
+        </div>
+
+    </form>
+</main>
+
+</body>
+</html>
