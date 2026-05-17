@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jordan Kellogg — Portfolio</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Hi, I'm Jordan Kellogg</h1>
+        <p>Software Developer — Check out my recent projects below.</p>
+    </section>
+
+    <!-- Projects Grid -->
+    <main class="projects-section">
+        <h2>Projects</h2>
+
+        <div th:if="${#lists.isEmpty(projects)}" class="empty-state">
+            <p>No projects yet — check back soon!</p>
+        </div>
+
+        <div class="projects-grid" th:unless="${#lists.isEmpty(projects)}">
+            <div class="project-card" th:each="project : ${projects}">
+                <img th:if="${project.thumbnailUrl != null and !project.thumbnailUrl.isBlank()}"
+                     th:src="${project.thumbnailUrl}"
+                     th:alt="${project.title}"
+                     class="project-thumbnail">
+                <div class="project-card-body">
+                    <h3>
+                        <a th:href="@{/projects/{id}(id=${project.id})}"
+                           th:text="${project.title}">Project Title</a>
+                    </h3>
+                    <p th:text="${#strings.abbreviate(project.description, 150)}">Short description...</p>
+                    <div class="project-card-meta">
+                        <span th:text="${#temporals.format(project.dateAdded, 'MMM d, yyyy')}">Jan 1, 2025</span>
+                    </div>
+                    <div class="project-card-links">
+                        <a th:if="${project.liveDemoUrl != null and !project.liveDemoUrl.isBlank()}"
+                           th:href="${project.liveDemoUrl}"
+                           target="_blank" rel="noopener noreferrer"
+                           class="btn btn-primary">Live Demo</a>
+                        <a th:if="${project.sourceCodeUrl != null and !project.sourceCodeUrl.isBlank()}"
+                           th:href="${project.sourceCodeUrl}"
+                           target="_blank" rel="noopener noreferrer"
+                           class="btn btn-secondary">Source Code</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
