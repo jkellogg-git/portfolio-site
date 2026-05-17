@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <header th:fragment="header">
+        <nav>
+            <div class="nav-container">
+                <a th:href="@{/}" class="nav-brand">Jordan Kellogg</a>
+                <ul class="nav-links">
+                    <li><a th:href="@{/}">Home</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</body>
+</html>
