@@ -26,6 +26,8 @@
     <section>
         <h2>Projects</h2>
         <a th:href="@{/admin/projects/new}">+ Add New Project</a>
+        &nbsp; | &nbsp;
+        <a th:href="@{/admin/home-sections}">✏ Edit Home Content</a>
 
         <div th:if="${#lists.isEmpty(projects)}">
             <p>No projects yet. Add your first one!</p>

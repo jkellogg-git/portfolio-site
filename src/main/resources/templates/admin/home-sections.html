@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Edit Home Content</title>
+</head>
+<body>
+
+<header>
+    <h1>Edit Home Content</h1>
+    <nav>
+        <a th:href="@{/admin/dashboard}">← Back to Dashboard</a>
+    </nav>
+</header>
+
+<main>
+    <!-- Flash messages -->
+    <div th:if="${successMessage}" style="color: green; border: 1px solid green; padding: 10px; margin-bottom: 15px;">
+        <p th:text="${successMessage}"></p>
+    </div>
+    <div th:if="${errorMessage}" style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 15px;">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+    <section th:each="section : ${sections}">
+        <form th:action="@{/admin/home-sections/save}" method="post">
+            <input type="hidden" name="id" th:value="${section.id}"/>
+            <input type="hidden" name="sectionKey" th:value="${section.sectionKey}"/>
+
+            <fieldset style="margin-bottom: 20px; padding: 15px;">
+                <legend th:text="${section.sectionKey}">section_key</legend>
+
+                <!-- Profile photo preview -->
+                <div th:if="${section.sectionKey == 'profile_photo_url' and section.content != null and !section.content.isBlank()}">
+                    <p>Current preview:</p>
+                    <img th:src="${section.content}" alt="Profile photo preview"
+                         style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;"/>
+                </div>
+
+                <label th:for="'content-' + ${section.id}">Content:</label><br/>
+                <textarea th:id="'content-' + ${section.id}"
+                          name="content"
+                          th:text="${section.content}"
+                          rows="3" cols="80"
+                          maxlength="2000"></textarea>
+
+                <br/>
+                <small>
+                    Last updated:
+                    <span th:text="${section.updatedAt != null ? #temporals.format(section.updatedAt, 'MMM d, yyyy h:mm a') : 'Never'}">—</span>
+                </small>
+                <br/><br/>
+                <button type="submit">Save</button>
+            </fieldset>
+        </form>
+    </section>
+</main>
+
+</body>
+</html>
