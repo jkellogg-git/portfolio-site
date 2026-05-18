@@ -1,7 +1,10 @@
 package com.jordan_kellogg.Portfoilio.controller;
 
+import com.jordan_kellogg.Portfoilio.dto.ExperienceForm;
+import com.jordan_kellogg.Portfoilio.dto.HomeSectionForm;
 import com.jordan_kellogg.Portfoilio.dto.ProjectForm;
 import com.jordan_kellogg.Portfoilio.model.Project;
+import com.jordan_kellogg.Portfoilio.service.HomeSectionService;
 import com.jordan_kellogg.Portfoilio.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdminController {
 
     private final ProjectService projectService;
+    private final HomeSectionService homeSectionService;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -69,5 +73,31 @@ public class AdminController {
         projectService.delete(id);
         redirectAttributes.addFlashAttribute("successMessage", "Project deleted.");
         return "redirect:/admin/dashboard";
+    }
+
+    @GetMapping("/home-sections")
+    public String homeSections(Model model) {
+        HomeSectionForm form = homeSectionService.getHomeSectionForm();
+
+        // Pad to 3 experience slots so the form always shows 3 inputs
+        while (form.getExperiences().size() < 3) {
+            form.getExperiences().add(new ExperienceForm());
+        }
+
+        model.addAttribute("homeSectionForm", form);
+        return "admin/home-sections";
+    }
+
+    @PostMapping("/home-sections/save")
+    public String saveHomeSection(
+            @Valid @ModelAttribute("homeSectionForm") HomeSectionForm form,
+            BindingResult result,
+            RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "admin/home-sections";
+        }
+        homeSectionService.save(form);
+        redirectAttributes.addFlashAttribute("successMessage", "Home content updated!");
+        return "redirect:/admin/home-sections";
     }
 }
